@@ -12,27 +12,24 @@ import java.util.List;
 public class BotButtonServiceImp implements BotButtonService {
 
     @Override
-    public InlineKeyboardMarkup createInlineKeyboardMarkupForChoosingTeam() {
+    public InlineKeyboardMarkup createTeamInlineKeyboardMarkup() {
+        List<InlineKeyboardButton> teamInlineButtons = createTeamInlineKeyboardButtonList();
+        return InlineKeyboardMarkup.builder()
+                .keyboardRow(teamInlineButtons.subList(0, 8))
+                .keyboardRow(teamInlineButtons.subList(9, 16))
+                .keyboardRow(teamInlineButtons.subList(16, 24))
+                .keyboardRow(teamInlineButtons.subList(24, 32))
+                .build();
+    }
 
-        List<InlineKeyboardButton> buttons = new ArrayList<>();
-
+    private List<InlineKeyboardButton> createTeamInlineKeyboardButtonList() {
+        List<InlineKeyboardButton> teamInlineButtons = new ArrayList<>();
         for (Team team : Team.values()) {
-            buttons.add(InlineKeyboardButton.builder()
+            teamInlineButtons.add(InlineKeyboardButton.builder()
                     .text(String.valueOf(team))
                     .callbackData(String.valueOf(team))
                     .build());
         }
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
-                .keyboardRow(buttons.subList(0, 8))
-                .keyboardRow(buttons.subList(8, 16))
-                .keyboardRow(buttons.subList(16, 24))
-                .keyboardRow(buttons.subList(24, 32))
-                .build();
-
-        return inlineKeyboardMarkup;
+        return teamInlineButtons;
     }
-
-
-
 }

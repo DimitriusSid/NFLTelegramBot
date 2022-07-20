@@ -4,5 +4,5 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 public interface BotButtonService {
 
-    InlineKeyboardMarkup createInlineKeyboardMarkupForChoosingTeam();
+    InlineKeyboardMarkup createTeamInlineKeyboardMarkup();
 }

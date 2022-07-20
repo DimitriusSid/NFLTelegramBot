@@ -1,5 +1,6 @@
 package nfl.telegram.bot;
 
+import nfl.telegram.bot.constant.BotCommand;
 import nfl.telegram.bot.service.botService.BotMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

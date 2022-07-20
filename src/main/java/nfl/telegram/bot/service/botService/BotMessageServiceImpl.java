@@ -1,34 +1,27 @@
 package nfl.telegram.bot.service.botService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class BotMessageServiceImpl implements BotMessageService {
+
+    @Value("${bot.message.greeting}")
+    private String GREETING_MESSAGE;
+    @Value("${bot.message.choose_team}")
+    private String CHOOSE_TEAM_MESSAGE;
 
     private BotButtonService botButtonService;
 
     @Autowired
     public BotMessageServiceImpl(BotButtonService botButtonService) {
         this.botButtonService = botButtonService;
-    }
-
-    @Override
-    public SendMessage sendGreetingMessage(Update update) {
-        return sendSimpleMessage(update, String.format("Hi, %s, you are welcome to NFL Bot. " +
-                "Press or type /chooseTeam to choose your favorite NFL Team" ,
-                update.getMessage().getChat().getFirstName()));
-    }
-
-    @Override
-    public SendMessage chooseFavoriteTeam(Update update) {
-        SendMessage sendMessage = sendSimpleMessage(update, "Select your team. You can always change" +
-                " your favorite team. Just press or type \n/changeFavoriteTeam");
-        sendMessage.setReplyMarkup(botButtonService.createInlineKeyboardMarkupForChoosingTeam());
-        return sendMessage;
     }
 
     @Override
@@ -39,6 +32,18 @@ public class BotMessageServiceImpl implements BotMessageService {
         return sendMessage;
     }
 
+    @Override
+    public SendMessage sendGreetingMessage(Update update) {
+        if (GREETING_MESSAGE == null) System.out.println(0);
+        return sendSimpleMessage(update, String.format(GREETING_MESSAGE, update.getMessage().getChat().getFirstName()));
+    }
+
+    @Override
+    public SendMessage chooseFavoriteTeam(Update update) {
+        SendMessage sendMessage = sendSimpleMessage(update, CHOOSE_TEAM_MESSAGE);
+        sendMessage.setReplyMarkup(botButtonService.createTeamInlineKeyboardMarkup());
+        return sendMessage;
+    }
 
 
     @Override
