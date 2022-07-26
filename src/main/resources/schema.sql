@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS "BOT_USER";
+DROP TABLE IF EXISTS bot_users;
 
-CREATE TABLE "BOT_USER" (
-                               id INT PRIMARY KEY,
-                               team VARCHAR(8)
+CREATE TABLE bot_users (
+                               id BIGINT PRIMARY KEY,
+                               team VARCHAR
 );

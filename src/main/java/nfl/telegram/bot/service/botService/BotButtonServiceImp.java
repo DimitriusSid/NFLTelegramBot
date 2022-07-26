@@ -15,10 +15,14 @@ public class BotButtonServiceImp implements BotButtonService {
     public InlineKeyboardMarkup createTeamInlineKeyboardMarkup() {
         List<InlineKeyboardButton> teamInlineButtons = createTeamInlineKeyboardButtonList();
         return InlineKeyboardMarkup.builder()
-                .keyboardRow(teamInlineButtons.subList(0, 8))
-                .keyboardRow(teamInlineButtons.subList(9, 16))
-                .keyboardRow(teamInlineButtons.subList(16, 24))
-                .keyboardRow(teamInlineButtons.subList(24, 32))
+                .keyboardRow(teamInlineButtons.subList(0, 4))
+                .keyboardRow(teamInlineButtons.subList(4, 8))
+                .keyboardRow(teamInlineButtons.subList(8, 12))
+                .keyboardRow(teamInlineButtons.subList(12, 16))
+                .keyboardRow(teamInlineButtons.subList(16, 20))
+                .keyboardRow(teamInlineButtons.subList(20, 24))
+                .keyboardRow(teamInlineButtons.subList(24, 28))
+                .keyboardRow(teamInlineButtons.subList(28, 32))
                 .build();
     }
 

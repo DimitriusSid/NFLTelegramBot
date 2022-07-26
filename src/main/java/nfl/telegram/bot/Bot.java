@@ -1,7 +1,7 @@
 package nfl.telegram.bot;
 
-import nfl.telegram.bot.constant.BotCommand;
 import nfl.telegram.bot.service.botService.BotMessageService;
+import nfl.telegram.bot.service.botService.BotOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -11,8 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import static nfl.telegram.bot.constant.BotCommand.CHOOSE_FAVORITE_TEAM;
-import static nfl.telegram.bot.constant.BotCommand.START;
+import static nfl.telegram.bot.constant.BotCommand.*;
 
 @Component
 @PropertySource("classpath:application.properties")
@@ -24,11 +23,13 @@ public class Bot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     private String TOKEN;
 
-    private final BotMessageService botService;
+    private final BotMessageService botMessageService;
+    private final BotOperationService botOperationService;
 
     @Autowired
-    public Bot(BotMessageService botService) {
-        this.botService = botService;
+    public Bot(BotMessageService botService, BotOperationService botOperationService) {
+        this.botMessageService = botService;
+        this.botOperationService = botOperationService;
     }
 
     @Override
@@ -48,20 +49,29 @@ public class Bot extends TelegramLongPollingBot {
             String incomingTextMessage = update.getMessage().getText();
             switch (incomingTextMessage) {
                 case START:
-                    executeMessage(botService.sendGreetingMessage(update));
+                    executeMessage(botOperationService.sendGreetingsMessage(update));
                     break;
                 case CHOOSE_FAVORITE_TEAM:
-                    executeMessage(botService.chooseFavoriteTeam(update));
+                case CHANGE_FAVORITE_TEAM:
+                    executeMessage(botOperationService.chooseFavoriteTeam(update));
                     break;
                 default:
-                    executeMessage(botService.sendSimpleMessage(update, "Incorrect value. Please, try again"));
+                    executeMessage(botMessageService.sendSimpleMessage(update, "Incorrect value. Please, try again"));
             }
         }
 
 
         if (update.hasCallbackQuery()) {
             try {
-                execute(botService.createEditMessageText(update, null));
+                execute(botOperationService.sendMessageOfSelectedTeam(update));
+                try {
+                    Thread.sleep(5000);
+                    execute(botMessageService.createEditMessageText(update, "You are loch after 1"));
+                    System.out.println("done");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
