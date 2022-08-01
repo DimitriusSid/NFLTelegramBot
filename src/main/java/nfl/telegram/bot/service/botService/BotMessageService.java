@@ -10,5 +10,4 @@ public interface BotMessageService {
     SendMessage sendSimpleMessage(Update update, String textMessage);
     EditMessageText createEditMessageText(Update update, String textMessage);
 
-
 }
