@@ -9,5 +9,6 @@ public interface ApiService {
 
     List<ByeWeek> getByeWeeks();
     ByeWeek getByeWeekForTeam(Update update);
+    String getCurrentWeek();
 
 }

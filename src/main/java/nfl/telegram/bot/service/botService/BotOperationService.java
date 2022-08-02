@@ -10,6 +10,9 @@ public interface BotOperationService {
     SendMessage chooseFavoriteTeam(Update update);
     SendMessage sendGreetingsMessage(Update update);
     EditMessageText sendMessageOfSelectedTeam(Update update);
+    SendMessage showByeWeeks(Update update);
+    SendMessage showByeWeekForFavoriteTeam(Update update);
+    SendMessage showCurrentWeek(Update update);
 
     BotUser createBotUser(Update update);
     BotUser saveBotUser(BotUser botUser);

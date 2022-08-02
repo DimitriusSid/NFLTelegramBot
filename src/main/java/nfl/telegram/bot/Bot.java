@@ -62,11 +62,14 @@ public class Bot extends TelegramLongPollingBot {
                 case CHANGE_FAVORITE_TEAM:
                     executeMessage(botOperationService.chooseFavoriteTeam(update));
                     break;
-                case "/byeWeek":
-//                    executeMessage(botMessageService.sendSimpleMessage(update, apiService.getByeWeeks()));
+                case BYE_WEEKS:
+                    executeMessage(botOperationService.showByeWeeks(update));
                     break;
-                case "/bye":
-//                    executeMessage(botMessageService.sendSimpleMessage(update, apiService.getByeWeekForTeam(update)));
+                case BYE_WEEK_MY_TEAM:
+                    executeMessage(botOperationService.showByeWeekForFavoriteTeam(update));
+                    break;
+                case CURRENT_WEEK:
+                    executeMessage(botOperationService.showCurrentWeek(update));
                     break;
                 default:
                     executeMessage(botMessageService.sendSimpleMessage(update, INCORRECT_VALUE_MESSAGE));
