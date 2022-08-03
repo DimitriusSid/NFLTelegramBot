@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Service
 public class BotOperationServiceImpl implements BotOperationService {
@@ -47,13 +46,14 @@ public class BotOperationServiceImpl implements BotOperationService {
 
     @Override
     public SendMessage sendGreetingsMessage(Update update) {
+        saveBotUser(update);
         return botMessageService.sendSimpleMessage(update, String.format(GREETING_MESSAGE,
                 update.getMessage().getChat().getFirstName()));
     }
 
     @Override
     public EditMessageText sendMessageOfSelectedTeam(Update update) {
-        saveBotUser(createBotUser(update));
+        saveBotUser(update);
         return botMessageService.createEditMessageText(update, SELECTED_TEAM);
     }
 
@@ -73,17 +73,13 @@ public class BotOperationServiceImpl implements BotOperationService {
 
     @Override
     public SendMessage showByeWeekForFavoriteTeam(Update update) {
-        List<ByeWeek> byeWeeks = apiService.getByeWeeks();
-        StringBuilder stringBuilder = new StringBuilder();
-        Team team = dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam();
-        byeWeeks.stream()
-                .filter(byeWeek -> byeWeek.getTeam().equals(team))
-                .forEach(byeWeek -> stringBuilder
-                        .append("Team ")
-                        .append(byeWeek.getTeam())
-                        .append(" on week ")
-                        .append(byeWeek.getWeek()));
-        return botMessageService.sendSimpleMessage(update, stringBuilder.toString());
+        ByeWeek byeWeek = apiService.getByeWeekForTeam(update);
+        if (byeWeek == null) {
+            return botMessageService.sendSimpleMessage(update, "Tap /chooseTeam and select yor favorite team");
+        } else {
+            String message = "Team " + byeWeek.getTeam() + " on week " + byeWeek.getWeek();
+            return botMessageService.sendSimpleMessage(update, message);
+        }
     }
 
     @Override
@@ -92,16 +88,15 @@ public class BotOperationServiceImpl implements BotOperationService {
     }
 
     @Override
-    public BotUser createBotUser(Update update) {
-        Long userId = update.getCallbackQuery().getFrom().getId();
-        Team team = Team.valueOf(update.getCallbackQuery().getData());
-        return new BotUser(userId, team);
+    public BotUser saveBotUser(Update update) {
+        if (update.getMessage() != null) {
+            Long userId = update.getMessage().getFrom().getId();
+            return dataService.saveBotUser(new BotUser(userId, null));
+        } else {
+            Long userId = update.getCallbackQuery().getFrom().getId();
+            Team team = Team.valueOf(update.getCallbackQuery().getData());
+            return dataService.saveBotUser(new BotUser(userId, team));
+        }
     }
-
-    @Override
-    public BotUser saveBotUser(BotUser botUser) {
-        return dataService.saveBotUser(botUser);
-    }
-
 
 }

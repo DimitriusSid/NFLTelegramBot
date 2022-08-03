@@ -1,5 +1,6 @@
 package nfl.telegram.bot;
 
+import nfl.telegram.bot.domian.BotUser;
 import nfl.telegram.bot.service.botService.BotMessageService;
 import nfl.telegram.bot.service.botService.BotOperationService;
 import nfl.telegram.bot.service.nflApiService.ApiService;
@@ -57,6 +58,7 @@ public class Bot extends TelegramLongPollingBot {
             switch (incomingTextMessage) {
                 case START:
                     executeMessage(botOperationService.sendGreetingsMessage(update));
+                    apiService.getSeasonSchedule();
                     break;
                 case CHOOSE_FAVORITE_TEAM:
                 case CHANGE_FAVORITE_TEAM:

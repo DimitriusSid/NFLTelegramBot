@@ -1,6 +1,8 @@
 package nfl.telegram.bot.service.nflApiService;
 
+import lombok.SneakyThrows;
 import nfl.telegram.bot.domian.ByeWeek;
+import nfl.telegram.bot.domian.Schedule;
 import nfl.telegram.bot.domian.Team;
 import nfl.telegram.bot.service.dataBaseService.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ApiServiceImpl implements ApiService {
@@ -24,9 +23,11 @@ public class ApiServiceImpl implements ApiService {
     @Value("${nfl.api.url.current_week}")
     private String NFL_API_URL_CURRENT_WEEK;
 
+    @Value("${nfl.api.url.schedule}")
+    private String NFL_API_URL_SCHEDULE;
+
     @Value("${nfl.api.key}")
     private String NFL_API_KEY;
-
 
 
     private final RestTemplate restTemplate;
@@ -50,13 +51,28 @@ public class ApiServiceImpl implements ApiService {
         List<ByeWeek> byeWeeks = getByeWeeks();
         Optional<ByeWeek> optionalByeWeek = byeWeeks.stream()
                 .filter(byeWeek -> byeWeek.getTeam().equals(getBotUserTeam(update))).findAny();
-        return optionalByeWeek.get();
+        return optionalByeWeek.orElse(null);
     }
 
     @Override
     public String getCurrentWeek() {
         return "Current week is " + restTemplate.getForObject(NFL_API_URL_CURRENT_WEEK + NFL_API_KEY, String.class);
     }
+
+
+    @Override
+    public Schedule getSeasonSchedule() {
+        ResponseEntity<Schedule[]> responseEntity =
+                restTemplate.getForEntity(NFL_API_URL_SCHEDULE + NFL_API_KEY, Schedule[].class);
+
+
+        System.out.println(Arrays.toString(responseEntity.getBody()));
+
+        return null;
+    }
+
+
+
 
     private Team getBotUserTeam(Update update) {
         return dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam();

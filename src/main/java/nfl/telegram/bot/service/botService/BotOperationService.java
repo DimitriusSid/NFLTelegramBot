@@ -14,8 +14,7 @@ public interface BotOperationService {
     SendMessage showByeWeekForFavoriteTeam(Update update);
     SendMessage showCurrentWeek(Update update);
 
-    BotUser createBotUser(Update update);
-    BotUser saveBotUser(BotUser botUser);
+    BotUser saveBotUser(Update update);
 
 
 }
