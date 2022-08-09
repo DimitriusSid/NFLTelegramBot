@@ -13,6 +13,11 @@ public interface BotOperationService {
     SendMessage showByeWeeks(Update update);
     SendMessage showByeWeekForFavoriteTeam(Update update);
     SendMessage showCurrentWeek(Update update);
+    SendMessage showScheduleForFavoriteTeam(Update update);
+    SendMessage showScheduleForCurrentWeek(Update update);
+
+    SendMessage chooseScheduleTeam(Update update);
+    EditMessageText showScheduleForTeam(Update update);
 
     BotUser saveBotUser(Update update);
 

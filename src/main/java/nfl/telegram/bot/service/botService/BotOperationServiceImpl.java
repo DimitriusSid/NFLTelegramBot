@@ -2,6 +2,7 @@ package nfl.telegram.bot.service.botService;
 
 import nfl.telegram.bot.domian.BotUser;
 import nfl.telegram.bot.domian.ByeWeek;
+import nfl.telegram.bot.domian.Schedule;
 import nfl.telegram.bot.domian.Team;
 import nfl.telegram.bot.service.dataBaseService.DataService;
 import nfl.telegram.bot.service.nflApiService.ApiService;
@@ -12,7 +13,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class BotOperationServiceImpl implements BotOperationService {
@@ -23,6 +26,9 @@ public class BotOperationServiceImpl implements BotOperationService {
     private String GREETING_MESSAGE;
     @Value("${bot.message.selected_team}")
     private String SELECTED_TEAM;
+    @Value("${bot.message.schedule_for_team}")
+    private String SCHEDULE_FOR_TEAM;
+
 
     private final BotMessageService botMessageService;
     private final BotButtonService botButtonService;
@@ -85,6 +91,71 @@ public class BotOperationServiceImpl implements BotOperationService {
     @Override
     public SendMessage showCurrentWeek(Update update) {
         return botMessageService.sendSimpleMessage(update, apiService.getCurrentWeek());
+    }
+
+    @Override
+    public SendMessage showScheduleForFavoriteTeam(Update update) {
+        List<Schedule> scheduleList = apiService.getSeasonSchedule();
+        StringBuilder stringBuilder = new StringBuilder();
+        scheduleList.stream()
+                .filter(schedule -> schedule.getHomeTeam()
+                        .equals(String.valueOf(dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam()))
+                        || schedule.getAwayTeam()
+                        .equals(String.valueOf(dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam())))
+                .forEach(schedule -> stringBuilder
+                        .append(schedule.getAwayTeam())
+                        .append("@")
+                        .append(schedule.getHomeTeam())
+                        .append(" on ")
+                        .append(schedule.getDate())
+                        .append("\n"));
+        return botMessageService.sendSimpleMessage(update, stringBuilder.toString());
+    }
+
+    @Override
+    public SendMessage showScheduleForCurrentWeek(Update update) {
+        List<Schedule> scheduleList = apiService.getSeasonSchedule();
+        StringBuilder stringBuilder = new StringBuilder();
+
+
+        scheduleList.stream()
+                .filter(schedule -> schedule.getWeek() == Integer.parseInt(apiService.getCurrentWeek()))
+                .forEach(schedule -> stringBuilder
+                        .append(schedule.getAwayTeam())
+                        .append("@")
+                        .append(schedule.getHomeTeam())
+                        .append(" on ")
+                        .append(schedule.getDate())
+                        .append("\n\n"));
+        return botMessageService.sendSimpleMessage(update, stringBuilder.toString());
+    }
+
+    @Override
+    public SendMessage chooseScheduleTeam(Update update) {
+        SendMessage sendMessage = botMessageService.sendSimpleMessage(update, SCHEDULE_FOR_TEAM);
+        sendMessage.setReplyMarkup(botButtonService.createTeamInlineKeyboardMarkup());
+        return sendMessage;
+    }
+
+    @Override
+    public EditMessageText showScheduleForTeam(Update update) {
+        String team = update.getCallbackQuery().getData();
+        List<Schedule> scheduleList = apiService.getSeasonSchedule();
+        StringBuilder stringBuilder = new StringBuilder();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, d MMM HH:mm", Locale.ENGLISH);
+        scheduleList.stream()
+                .filter(schedule -> schedule.getDate() != null)
+                .filter(schedule ->
+                        schedule.getHomeTeam().equals(team) || schedule.getAwayTeam().equals(team))
+                .forEach(schedule -> stringBuilder
+                        .append(schedule.getAwayTeam())
+                        .append("@")
+                        .append(schedule.getHomeTeam())
+                        .append(" on ")
+                        .append(simpleDateFormat.format(schedule.getDate()))
+                        .append("\n\n"));
+        System.out.println(stringBuilder.length());
+        return botMessageService.createEditMessageText(update, stringBuilder.toString());
     }
 
     @Override

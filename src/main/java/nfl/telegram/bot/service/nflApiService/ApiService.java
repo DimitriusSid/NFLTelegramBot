@@ -11,6 +11,6 @@ public interface ApiService {
     List<ByeWeek> getByeWeeks();
     ByeWeek getByeWeekForTeam(Update update);
     String getCurrentWeek();
-    Schedule getSeasonSchedule();
+    List<Schedule> getSeasonSchedule();
 
 }

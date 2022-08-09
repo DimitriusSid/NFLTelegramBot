@@ -1,6 +1,5 @@
 package nfl.telegram.bot.service.nflApiService;
 
-import lombok.SneakyThrows;
 import nfl.telegram.bot.domian.ByeWeek;
 import nfl.telegram.bot.domian.Schedule;
 import nfl.telegram.bot.domian.Team;
@@ -56,23 +55,16 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public String getCurrentWeek() {
-        return "Current week is " + restTemplate.getForObject(NFL_API_URL_CURRENT_WEEK + NFL_API_KEY, String.class);
+        return restTemplate.getForObject(NFL_API_URL_CURRENT_WEEK + NFL_API_KEY, String.class);
     }
 
 
     @Override
-    public Schedule getSeasonSchedule() {
+    public List<Schedule> getSeasonSchedule() {
         ResponseEntity<Schedule[]> responseEntity =
                 restTemplate.getForEntity(NFL_API_URL_SCHEDULE + NFL_API_KEY, Schedule[].class);
-
-
-        System.out.println(Arrays.toString(responseEntity.getBody()));
-
-        return null;
+        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
     }
-
-
-
 
     private Team getBotUserTeam(Update update) {
         return dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam();

@@ -1,15 +1,9 @@
 package nfl.telegram.bot.domian;
 
-import com.fasterxml.jackson.annotation.JsonMerge;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class Schedule {
@@ -26,19 +20,8 @@ public class Schedule {
     @JsonProperty(value = "AwayTeam")
     private String awayTeam;
 
-
-    @Data
-    @JsonRootName(value = "StadiumDetails")
-    public static class Stadium {
-        @JsonProperty(value = "name")
-        private String name;
-
-        @JsonProperty(value = "City")
-        private String city;
-
-    }
-
-
-
+//    @JsonAnyGetter
+//    @JsonProperty(value = "StadiumDetails")
+//    private Map<String, String> stadiumDetails;
 
 }
