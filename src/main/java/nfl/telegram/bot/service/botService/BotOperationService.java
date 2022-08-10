@@ -10,16 +10,28 @@ public interface BotOperationService {
     SendMessage chooseFavoriteTeam(Update update);
     SendMessage sendGreetingsMessage(Update update);
     EditMessageText sendMessageOfSelectedTeam(Update update);
+
     SendMessage showByeWeeks(Update update);
     SendMessage showByeWeekForFavoriteTeam(Update update);
+    EditMessageText showByeWeekForAnyTeam(Update update);
+
     SendMessage showCurrentWeek(Update update);
     SendMessage showScheduleForFavoriteTeam(Update update);
     SendMessage showScheduleForCurrentWeek(Update update);
 
     SendMessage chooseScheduleTeam(Update update);
     EditMessageText showScheduleForTeam(Update update);
+    SendMessage chooseByeWeekTeam(Update update);
 
     BotUser saveBotUser(Update update);
 
 
+    SendMessage showStandingForFavoriteTeam(Update update);
+    SendMessage chooseStandingTeam(Update update);
+
+    EditMessageText showStandingForTeam(Update update);
+    SendMessage showFavoriteNFLTeamInfo(Update update);
+
+    SendMessage chooseNFLTeam(Update update);
+    EditMessageText showAnyNFLTeamInfo(Update update);
 }

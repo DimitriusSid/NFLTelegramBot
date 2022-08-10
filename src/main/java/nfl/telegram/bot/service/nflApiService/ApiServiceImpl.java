@@ -1,15 +1,14 @@
 package nfl.telegram.bot.service.nflApiService;
 
 import nfl.telegram.bot.domian.ByeWeek;
+import nfl.telegram.bot.domian.NFLTeam;
 import nfl.telegram.bot.domian.Schedule;
-import nfl.telegram.bot.domian.Team;
-import nfl.telegram.bot.service.dataBaseService.DataService;
+import nfl.telegram.bot.domian.Standing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.*;
 
@@ -25,17 +24,23 @@ public class ApiServiceImpl implements ApiService {
     @Value("${nfl.api.url.schedule}")
     private String NFL_API_URL_SCHEDULE;
 
+    @Value("${nfl.api.url.standing}")
+    private String NFL_API_URL_STANDING;
+
+    @Value("${nfl.api.url.nfl_team_info}")
+    private String NFL_API_URL_NFL_TEAM_INFO;
+
     @Value("${nfl.api.key}")
     private String NFL_API_KEY;
 
 
+
+
     private final RestTemplate restTemplate;
-    private final DataService dataService;
 
     @Autowired
-    public ApiServiceImpl(RestTemplate restTemplate, DataService dataService) {
+    public ApiServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.dataService = dataService;
     }
 
     @Override
@@ -43,14 +48,6 @@ public class ApiServiceImpl implements ApiService {
         ResponseEntity<ByeWeek[]> responseEntity =
                 restTemplate.getForEntity(NFL_API_URL_BYES + NFL_API_KEY, ByeWeek[].class);
         return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
-    }
-
-    @Override
-    public ByeWeek getByeWeekForTeam(Update update) {
-        List<ByeWeek> byeWeeks = getByeWeeks();
-        Optional<ByeWeek> optionalByeWeek = byeWeeks.stream()
-                .filter(byeWeek -> byeWeek.getTeam().equals(getBotUserTeam(update))).findAny();
-        return optionalByeWeek.orElse(null);
     }
 
     @Override
@@ -66,7 +63,17 @@ public class ApiServiceImpl implements ApiService {
         return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
     }
 
-    private Team getBotUserTeam(Update update) {
-        return dataService.getBotUser(update.getMessage().getFrom().getId()).getTeam();
+    @Override
+    public List<Standing> getSeasonStanding() {
+        ResponseEntity<Standing[]> responseEntity =
+                restTemplate.getForEntity(NFL_API_URL_STANDING + NFL_API_KEY, Standing[].class);
+        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+    }
+
+    @Override
+    public List<NFLTeam> getNFLTeamInfo() {
+        ResponseEntity<NFLTeam[]> responseEntity =
+                restTemplate.getForEntity(NFL_API_URL_NFL_TEAM_INFO + NFL_API_KEY, NFLTeam[].class);
+        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
     }
 }

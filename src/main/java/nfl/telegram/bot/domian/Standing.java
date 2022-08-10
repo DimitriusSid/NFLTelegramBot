@@ -21,6 +21,9 @@ public class Standing {
     @JsonProperty(value = "Losses")
     private int losses;
 
+    @JsonProperty(value = "Ties")
+    private int ties;
+
     @JsonProperty(value = "Touchdowns")
     private int touchdowns;
 

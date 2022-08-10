@@ -1,7 +1,5 @@
 package nfl.telegram.bot;
 
-import nfl.telegram.bot.domian.BotUser;
-import nfl.telegram.bot.domian.Team;
 import nfl.telegram.bot.service.botService.BotMessageService;
 import nfl.telegram.bot.service.botService.BotOperationService;
 import nfl.telegram.bot.service.nflApiService.ApiService;
@@ -10,14 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.Arrays;
 
 import static nfl.telegram.bot.constant.BotCommand.*;
 
@@ -38,7 +32,17 @@ public class Bot extends TelegramLongPollingBot {
     private String CHOOSE_TEAM_MESSAGE;
 
     @Value("${bot.message.schedule_for_team}")
-    private String SCHEDULE_FOR_TEAM;
+    private String TEAM_SCHEDULE;
+
+    @Value("${bot.message.byeweek_for_team}")
+    private String BYEWEEK_FOR_TEAM;
+
+    @Value("${bot.message.standing_for_team}")
+    private String STANDING_FOR_TEAM;
+
+    @Value("${bot.message.nfl_team_info}")
+    private String NFL_TEAM_INFO;
+
 
     private final BotMessageService botMessageService;
     private final BotOperationService botOperationService;
@@ -80,17 +84,32 @@ public class Bot extends TelegramLongPollingBot {
                 case BYE_WEEK_MY_TEAM:
                     executeMessage(botOperationService.showByeWeekForFavoriteTeam(update));
                     break;
+                case BYE_WEEK_FOR_ANY_TEAM:
+                    executeMessage(botOperationService.chooseByeWeekTeam(update));
+                    break;
                 case CURRENT_WEEK:
                     executeMessage(botOperationService.showCurrentWeek(update));
                     break;
-                case SCHEDULE:
+                case SCHEDULE_FOR_FAVORITE_TEAM:
                     executeMessage(botOperationService.showScheduleForFavoriteTeam(update));
                     break;
                 case CURRENT_WEEK_SCHEDULE:
                     executeMessage(botOperationService.showScheduleForCurrentWeek(update));
                     break;
-                case SHOW_SCHEDULE_FOR_TEAM:
+                case SCHEDULE_FOR_TEAM:
                     executeMessage(botOperationService.chooseScheduleTeam(update));
+                    break;
+                case STANDING_FOR_FAVORITE_TEAM:
+                    executeMessage(botOperationService.showStandingForFavoriteTeam(update));
+                    break;
+                case STANDING_FOR_ANY_TEAM:
+                    executeMessage(botOperationService.chooseStandingTeam(update));
+                    break;
+                case FAVORITE_NFL_TEAM_INFO:
+                    executeMessage(botOperationService.showFavoriteNFLTeamInfo(update));
+                    break;
+                case ANY_NFL_TEAM_INFO:
+                    executeMessage(botOperationService.chooseNFLTeam(update));
                     break;
                 default:
                     executeMessage(botMessageService.sendSimpleMessage(update, INCORRECT_VALUE_MESSAGE));
@@ -100,8 +119,14 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasCallbackQuery()) {
             if (update.getCallbackQuery().getMessage().getText().equals(CHOOSE_TEAM_MESSAGE)) {
                 executeEditMessageText(botOperationService.sendMessageOfSelectedTeam(update));
-            } else if (update.getCallbackQuery().getMessage().getText().equals(SCHEDULE_FOR_TEAM)) {
+            } else if (update.getCallbackQuery().getMessage().getText().equals(TEAM_SCHEDULE)) {
                 executeEditMessageText(botOperationService.showScheduleForTeam(update));
+            } else if (update.getCallbackQuery().getMessage().getText().equals(BYEWEEK_FOR_TEAM)) {
+                executeEditMessageText(botOperationService.showByeWeekForAnyTeam(update));
+            } else if (update.getCallbackQuery().getMessage().getText().equals(STANDING_FOR_TEAM)) {
+                executeEditMessageText(botOperationService.showStandingForTeam(update));
+            } else if (update.getCallbackQuery().getMessage().getText().equals(NFL_TEAM_INFO)) {
+                executeEditMessageText(botOperationService.showAnyNFLTeamInfo(update));
             }
         }
     }
