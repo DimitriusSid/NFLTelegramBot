@@ -20,8 +20,4 @@ public class Schedule {
     @JsonProperty(value = "AwayTeam")
     private String awayTeam;
 
-//    @JsonAnyGetter
-//    @JsonProperty(value = "StadiumDetails")
-//    private Map<String, String> stadiumDetails;
-
 }

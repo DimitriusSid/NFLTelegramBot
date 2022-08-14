@@ -15,4 +15,8 @@ public interface ApiService {
     List<Standing> getSeasonStanding();
     List<NFLTeam> getNFLTeamInfo();
 
+
+
+
+
 }

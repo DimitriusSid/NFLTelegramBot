@@ -1,6 +1,7 @@
-package nfl.telegram.bot.service.dataBaseService;
+package nfl.telegram.bot.service.dataBaseService.dataServcie;
 
 import nfl.telegram.bot.domian.BotUser;
+import nfl.telegram.bot.service.dataBaseService.dataDAO.DataDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,8 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public BotUser saveBotUser(BotUser botUser) {
-        return dataDAO.saveBotUser(botUser);
+    public void saveBotUser(BotUser botUser) {
+        dataDAO.saveBotUser(botUser);
     }
 
     @Override

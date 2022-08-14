@@ -1,4 +1,4 @@
-package nfl.telegram.bot.service.dataBaseService;
+package nfl.telegram.bot.service.dataBaseService.dataDAO;
 
 import nfl.telegram.bot.domian.BotUser;
 import org.hibernate.Session;
@@ -18,13 +18,12 @@ public class DataDAOImpl implements DataDAO {
     }
 
     @Override
-    public BotUser saveBotUser(BotUser botUser) {
+    public void saveBotUser(BotUser botUser) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.saveOrUpdate(botUser);
         session.getTransaction().commit();
         session.close();
-        return botUser;
     }
 
     @Override

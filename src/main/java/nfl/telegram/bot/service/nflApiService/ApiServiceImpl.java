@@ -33,9 +33,6 @@ public class ApiServiceImpl implements ApiService {
     @Value("${nfl.api.key}")
     private String NFL_API_KEY;
 
-
-
-
     private final RestTemplate restTemplate;
 
     @Autowired
