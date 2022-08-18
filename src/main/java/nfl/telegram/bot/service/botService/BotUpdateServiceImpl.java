@@ -91,15 +91,16 @@ public class BotUpdateServiceImpl implements BotUpdateService {
 
     @Override
     public EditMessageText callBackQueryHandler(Update update) {
-        if (update.getCallbackQuery().getMessage().getText().equals(CHOOSE_TEAM_MESSAGE)) {
+        String incomingMessage = update.getCallbackQuery().getMessage().getText();
+        if (incomingMessage.equals(CHOOSE_TEAM_MESSAGE)) {
             return startingBotService.sendMessageOfSelectedTeam(update);
-        } else if (update.getCallbackQuery().getMessage().getText().equals(TEAM_SCHEDULE)) {
+        } else if (incomingMessage.equals(TEAM_SCHEDULE)) {
             return scheduleService.showScheduleForAnyTeam(update);
-        } else if (update.getCallbackQuery().getMessage().getText().equals(BYEWEEK_FOR_TEAM)) {
+        } else if (incomingMessage.equals(BYEWEEK_FOR_TEAM)) {
             return byeWeeksService.showByeWeekForAnyTeam(update);
-        } else if (update.getCallbackQuery().getMessage().getText().equals(STANDING_FOR_TEAM)) {
+        } else if (incomingMessage.equals(STANDING_FOR_TEAM)) {
             return standingService.showStandingForAnyTeam(update);
-        } else if (update.getCallbackQuery().getMessage().getText().equals(NFL_TEAM_INFO)) {
+        } else if (incomingMessage.equals(NFL_TEAM_INFO)) {
             return nflTeamInfoService.showAnyNFLTeamInfo(update);
         }
         return botMessageService.sendEditMessageText(update, INCORRECT_VALUE_MESSAGE);

@@ -18,12 +18,13 @@ public class DataDAOImpl implements DataDAO {
     }
 
     @Override
-    public void saveBotUser(BotUser botUser) {
+    public BotUser saveBotUser(BotUser botUser) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.saveOrUpdate(botUser);
         session.getTransaction().commit();
         session.close();
+        return botUser;
     }
 
     @Override

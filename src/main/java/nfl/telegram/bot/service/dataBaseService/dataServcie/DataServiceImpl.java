@@ -17,8 +17,9 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public void saveBotUser(BotUser botUser) {
+    public BotUser saveBotUser(BotUser botUser) {
         dataDAO.saveBotUser(botUser);
+        return botUser;
     }
 
     @Override
